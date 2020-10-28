@@ -4,7 +4,10 @@
 
 package m3ua
 
-import "github.com/vazir/m3ua-go/messages"
+import (
+	"github.com/vazir/m3ua-go/messages"
+	"log"
+)
 
 func (c *Conn) initiateASPSM() error {
 	if _, err := c.WriteSignal(
@@ -16,6 +19,7 @@ func (c *Conn) initiateASPSM() error {
 	return nil
 }
 func (c *Conn) handleAspUp(aspUp *messages.AspUp) error {
+	log.Printf("Handling AspUp")
 	if c.state != StateAspDown {
 		return NewErrUnexpectedMessage(aspUp)
 
@@ -37,6 +41,7 @@ func (c *Conn) handleAspUp(aspUp *messages.AspUp) error {
 }
 
 func (c *Conn) handleAspUpAck(aspUpAck *messages.AspUpAck) error {
+	log.Printf("Handling AspUpAck")
 	if c.state != StateAspDown {
 		return NewErrUnexpectedMessage(aspUpAck)
 	}
@@ -48,6 +53,7 @@ func (c *Conn) handleAspUpAck(aspUpAck *messages.AspUpAck) error {
 }
 
 func (c *Conn) handleAspDown(aspDown *messages.AspDown) error {
+	log.Printf("Handling AspDown")
 	switch c.state {
 	case StateAspInactive, StateAspActive:
 		return NewErrUnexpectedMessage(aspDown)
@@ -66,6 +72,7 @@ func (c *Conn) handleAspDown(aspDown *messages.AspDown) error {
 }
 
 func (c *Conn) handleAspDownAck(aspDownAck *messages.AspDownAck) error {
+	log.Printf("Handling AspDownAck")
 	switch c.state {
 	case StateAspInactive, StateAspActive:
 		return NewErrUnexpectedMessage(aspDownAck)

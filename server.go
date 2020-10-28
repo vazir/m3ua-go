@@ -7,6 +7,7 @@ package m3ua
 import (
 	"context"
 	"fmt"
+	"log"
 	"net"
 	"sync"
 	"time"
@@ -68,6 +69,7 @@ func (l *Listener) Accept(ctx context.Context) (*Conn, error) {
 	}
 
 	go func() {
+		log.Printf("Sending StateAspDown")
 		conn.stateChan <- StateAspDown
 	}()
 
