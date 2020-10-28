@@ -11,6 +11,7 @@ import (
 	"github.com/vazir/m3ua-go/messages/params"
 	"io"
 	"log"
+	"sync"
 )
 
 // State represents ASP State.
@@ -195,6 +196,7 @@ func (c *Conn) monitor(ctx context.Context) {
 	c.errChan = make(chan error)
 	c.dataChan = make(chan *params.ProtocolDataPayload, 0xffff)
 	c.beatAckChan = make(chan struct{})
+	c.beatAllow = sync.NewCond(&sync.Mutex{})
 	c.beatAllow.L.Lock()
 	go c.heartbeat(ctx)
 	defer c.beatAllow.Broadcast()
