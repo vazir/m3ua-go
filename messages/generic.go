@@ -9,7 +9,7 @@ import (
 	"log"
 
 	"github.com/pkg/errors"
-	"github.com/wmnsk/go-m3ua/messages/params"
+	"github.com/vazir/m3ua-go/messages/params"
 )
 
 // Generic is generic structure of M3UA.

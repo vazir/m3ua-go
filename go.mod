@@ -1,4 +1,4 @@
-module github.com/wmnsk/go-m3ua
+module github.com/vazir/m3ua-go
 
 require (
 	github.com/google/go-cmp v0.4.1

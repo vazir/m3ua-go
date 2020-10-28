@@ -11,7 +11,7 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/pkg/errors"
-	"github.com/wmnsk/go-m3ua/messages/params"
+	"github.com/vazir/m3ua-go/messages/params"
 
 	"github.com/ishidawataru/sctp"
 )

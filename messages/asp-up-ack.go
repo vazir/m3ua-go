@@ -9,7 +9,7 @@ import (
 	"log"
 
 	"github.com/pkg/errors"
-	"github.com/wmnsk/go-m3ua/messages/params"
+	"github.com/vazir/m3ua-go/messages/params"
 )
 
 // AspUpAck is a AspUpAck type of M3UA message.

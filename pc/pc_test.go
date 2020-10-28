@@ -3,7 +3,7 @@ package pc_test
 import (
 	"testing"
 
-	"github.com/wmnsk/go-m3ua/pc"
+	"github.com/vazir/m3ua-go/pc"
 )
 
 // TODO: coverage...

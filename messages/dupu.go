@@ -6,7 +6,7 @@ package messages
 
 import (
 	"github.com/pkg/errors"
-	"github.com/wmnsk/go-m3ua/messages/params"
+	"github.com/vazir/m3ua-go/messages/params"
 )
 
 // DestinationUserPartUnavailable is a DestinationUserPartUnavailable type of M3UA message.

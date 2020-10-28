@@ -3,9 +3,9 @@
 Simple M3UA protocol implementation in pure Golang.
 
 [![CircleCI](https://circleci.com/gh/wmnsk/go-m3ua.svg?style=shield)](https://circleci.com/gh/wmnsk/go-m3ua)
-[![GolangCI](https://golangci.com/badges/github.com/wmnsk/go-m3ua.svg)](https://golangci.com/r/github.com/wmnsk/go-m3ua)
-[![GoDoc](https://godoc.org/github.com/wmnsk/go-m3ua?status.svg)](https://godoc.org/github.com/wmnsk/go-m3ua)
-[![GitHub](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/wmnsk/go-m3ua/blob/master/LICENSE)
+[![GolangCI](https://golangci.com/badges/github.com/vazir/m3ua-go.svg)](https://golangci.com/r/github.com/vazir/m3ua-go)
+[![GoDoc](https://godoc.org/github.com/vazir/m3ua-go?status.svg)](https://godoc.org/github.com/vazir/m3ua-go)
+[![GitHub](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/vazir/m3ua-go/blob/master/LICENSE)
 
 ## Quickstart
 
@@ -20,7 +20,7 @@ go get -u github.com/pkg/errors
 go get -u github.com/ishidawataru/sctp
 go get -u github.com/google/go-cmp/cmp
 go get -u github.com/pascaldekloe/goe/verify
-go get -u github.com/wmnsk/go-m3ua
+go get -u github.com/vazir/m3ua-go
 ```
 
 _*Non-Linux machine is NOT supported, as this package relies much on [`github.com/ishidawataru/sctp`](https://github.com/ishidawataru/sctp)._
@@ -180,4 +180,4 @@ Yoshiyuki Kurauchi ([My Website](https://wmnsk.com/) / [Twitter](https://twitter
 
 ## LICENSE
 
-[MIT](https://github.com/wmnsk/go-m3ua/blob/master/LICENSE)
+[MIT](https://github.com/vazir/m3ua-go/blob/master/LICENSE)
