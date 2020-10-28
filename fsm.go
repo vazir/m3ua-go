@@ -199,9 +199,11 @@ func (c *Conn) monitor(ctx context.Context) {
 		case err := <-c.errChan:
 			log.Printf("Errchan got: %s", err)
 			if e := c.handleErrors(err); e != nil {
+				log.Printf("Error: %s handled. Closing channel", err)
 				c.Close()
 				return
 			}
+			log.Printf("Error: %s not handled, continuing.", err)
 			continue
 		case state := <-c.stateChan:
 			log.Printf("State chan got: %s", state)
@@ -216,6 +218,7 @@ func (c *Conn) monitor(ctx context.Context) {
 			// Read from conn to see something coming from the peer.
 			n, info, err := c.sctpConn.SCTPRead(buf)
 			if err != nil {
+				log.Printf("ERR on the sctp...: %s, %s", err, info)
 				if err == io.EOF {
 					log.Printf("EOF on the sctp...: %s", err)
 					continue
@@ -239,7 +242,6 @@ func (c *Conn) monitor(ctx context.Context) {
 				log.Printf("Unable to parse SCTP message: %s", err)
 				continue
 			}
-			log.Printf("Backgrounding signals handling with ctx: %s, msg: %s", ctx, msg)
 			go c.handleSignals(ctx, msg)
 		}
 	}
