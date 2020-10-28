@@ -110,56 +110,62 @@ func (c *Conn) handleSignals(ctx context.Context, m3 messages.M3UA) {
 	// ASPSM
 	case *messages.AspUp:
 		if err := c.handleAspUp(msg); err != nil {
-			log.Printf("Error handling: %s, err: %s", msg, err)
+			log.Printf("Error handling handleAspUp: %s, err: %s", msg, err)
 			c.errChan <- err
 		}
 		c.stateChan <- StateAspInactive
 	case *messages.AspUpAck:
 		if err := c.handleAspUpAck(msg); err != nil {
-			log.Printf("Error handling: %s, err: %s", msg, err)
+			log.Printf("Error handling handleAspUpAck: %s, err: %s", msg, err)
 			c.errChan <- err
 		}
 		c.stateChan <- StateAspInactive
 	case *messages.AspDown:
 		if err := c.handleAspDown(msg); err != nil {
-			log.Printf("Error handling: %s, err: %s", msg, err)
+			log.Printf("Error handling handleAspDown: %s, err: %s", msg, err)
 			c.errChan <- err
 		}
 		c.stateChan <- StateAspDown
 	case *messages.AspDownAck:
 		if err := c.handleAspDownAck(msg); err != nil {
-			log.Printf("Error handling: %s, err: %s", msg, err)
+			log.Printf("Error handling handleAspDownAck: %s, err: %s", msg, err)
 			c.errChan <- err
 		}
 		c.stateChan <- StateAspDown
 	// ASPTM
 	case *messages.AspActive:
 		if err := c.handleAspActive(msg); err != nil {
+			log.Printf("Error handling handleAspActive: %s, err: %s", msg, err)
 			c.errChan <- err
 		}
 		c.stateChan <- StateAspActive
 	case *messages.AspActiveAck:
 		if err := c.handleAspActiveAck(msg); err != nil {
+			log.Printf("Error handling handleAspActiveAck: %s, err: %s", msg, err)
 			c.errChan <- err
 		}
 		c.stateChan <- StateAspActive
 	case *messages.AspInactive:
 		if err := c.handleAspInactive(msg); err != nil {
+			log.Printf("Error handling handleAspInactive: %s, err: %s", msg, err)
 			c.errChan <- err
 		}
 		c.stateChan <- StateAspInactive
 	case *messages.AspInactiveAck:
 		if err := c.handleAspInactiveAck(msg); err != nil {
+			log.Printf("Error handling handleAspInactiveAck: %s, err: %s", msg, err)
 			c.errChan <- err
 		}
 		c.stateChan <- StateAspInactive
 	case *messages.Heartbeat:
 		if err := c.handleHeartbeat(msg); err != nil {
+			log.Printf("Error handling handleHeartbeat: %s, err: %s", msg, err)
 			c.errChan <- err
 		}
 		c.stateChan <- c.state
 	case *messages.HeartbeatAck:
 		if err := c.handleHeartbeatAck(msg); err != nil {
+			log.Printf("Error handling handleHeartbeatAck: %s, err: %s", msg, err)
 			c.errChan <- err
 		}
 		c.beatAckChan <- struct{}{}
@@ -167,11 +173,13 @@ func (c *Conn) handleSignals(ctx context.Context, m3 messages.M3UA) {
 		// Management
 	case *messages.Error:
 		if err := c.handleError(msg); err != nil {
+			log.Printf("Error handling handleError: %s, err: %s", msg, err)
 			c.errChan <- err
 		}
 		c.stateChan <- c.state
 	case *messages.Notify:
 		if err := c.handleNotify(msg); err != nil {
+			log.Printf("Error handling handleNotify: %s, err: %s", msg, err)
 			c.errChan <- err
 		}
 		c.stateChan <- c.state
