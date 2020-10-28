@@ -7,6 +7,7 @@ package m3ua
 import (
 	"context"
 	"io"
+	"log"
 
 	"github.com/pkg/errors"
 	"github.com/vazir/m3ua-go/messages"
@@ -88,12 +89,13 @@ func (c *Conn) handleStateUpdateAsServer(current, previous State) error {
 }
 
 func (c *Conn) handleSignals(ctx context.Context, m3 messages.M3UA) {
+	log.Printf("Handling Signals: %s", m3)
 	select {
 	case <-ctx.Done():
 		return
 	default:
 	}
-
+	log.Printf("Handling Signals - after select: %s", m3)
 	// Signal validations
 	if m3.Version() != 1 {
 		c.errChan <- NewErrInvalidVersion(m3.Version())
@@ -173,6 +175,7 @@ func (c *Conn) handleSignals(ctx context.Context, m3 messages.M3UA) {
 	default:
 		c.errChan <- NewErrUnsupportedMessage(m3)
 	}
+	log.Printf("END Handling Signals - after select: %s", m3)
 }
 
 func (c *Conn) monitor(ctx context.Context) {
@@ -180,22 +183,28 @@ func (c *Conn) monitor(ctx context.Context) {
 	c.dataChan = make(chan *params.ProtocolDataPayload, 0xffff)
 	c.beatAckChan = make(chan struct{})
 	if c.cfg.HeartbeatInfo.Enabled {
+		log.Printf("Heartbeat enabled")
 		go c.heartbeat(ctx)
+	} else {
+		log.Printf("Heartbeat not enabled")
 	}
 
 	buf := make([]byte, 0xffff)
 	for {
 		select {
 		case <-ctx.Done():
+			log.Printf("Context done.")
 			c.Close()
 			return
 		case err := <-c.errChan:
+			log.Printf("Errchan got: %s", err)
 			if e := c.handleErrors(err); e != nil {
 				c.Close()
 				return
 			}
 			continue
 		case state := <-c.stateChan:
+			log.Printf("State chan got: %s", state)
 			// Act properly based on current state.
 			if err := c.handleStateUpdate(state); err != nil {
 				if err == ErrSCTPNotAlive {
@@ -208,8 +217,10 @@ func (c *Conn) monitor(ctx context.Context) {
 			n, info, err := c.sctpConn.SCTPRead(buf)
 			if err != nil {
 				if err == io.EOF {
+					log.Printf("Nothing to read from the sctp...: %s", err)
 					continue
 				}
+				log.Printf("Closing SCTP: %s", err)
 				c.Close()
 				return
 			}
@@ -223,6 +234,7 @@ func (c *Conn) monitor(ctx context.Context) {
 			// Parse the received packet as M3UA. Undecodable packets are ignored.
 			msg, err := messages.Parse(buf[:n])
 			if err != nil {
+				log.Printf("Unable to parse SCTP message: %s", err)
 				continue
 			}
 
