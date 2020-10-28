@@ -51,6 +51,7 @@ func (l *Listener) Accept(ctx context.Context) (*Conn, error) {
 		established: make(chan struct{}),
 		sctpInfo:    &sctp.SndRcvInfo{PPID: 0x03000000, Stream: 0},
 		cfg:         l.Config,
+		beatAllow:   sync.NewCond(&sync.Mutex{}),
 	}
 
 	if conn.cfg.HeartbeatInfo.Interval == 0 {

@@ -6,12 +6,11 @@ package m3ua
 
 import (
 	"context"
-	"io"
-	"log"
-
 	"github.com/pkg/errors"
 	"github.com/vazir/m3ua-go/messages"
 	"github.com/vazir/m3ua-go/messages/params"
+	"io"
+	"log"
 )
 
 // State represents ASP State.
@@ -79,6 +78,7 @@ func (c *Conn) handleStateUpdateAsServer(current, previous State) error {
 	case StateAspActive:
 		if current != previous {
 			c.established <- struct{}{}
+			c.beatAllow.Broadcast()
 		}
 		return nil
 	case StateSCTPCDI, StateSCTPRI:
@@ -195,13 +195,9 @@ func (c *Conn) monitor(ctx context.Context) {
 	c.errChan = make(chan error)
 	c.dataChan = make(chan *params.ProtocolDataPayload, 0xffff)
 	c.beatAckChan = make(chan struct{})
-	if c.cfg.HeartbeatInfo.Enabled {
-		log.Printf("Heartbeat enabled")
-		go c.heartbeat(ctx)
-	} else {
-		log.Printf("Heartbeat not enabled")
-	}
-
+	c.beatAllow.L.Lock()
+	go c.heartbeat(ctx)
+	defer c.beatAllow.Broadcast()
 	buf := make([]byte, 0xffff)
 	for {
 		select {
