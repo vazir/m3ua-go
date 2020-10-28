@@ -40,13 +40,16 @@ func (c *Conn) heartbeat(ctx context.Context) {
 			return
 		}
 		beat.HeartbeatData = params.NewHeartbeatData(data)
+		log.Printf("Sending Heartbeat")
 		if _, err := c.WriteSignal(beat); err != nil {
+			log.Printf("Unable to send heartbeat!")
 			c.errChan <- ErrFailedToWriteSignal
 			return
 		}
 		c.cfg.HeartbeatInfo.Data = data
 
 		// wait for response
+		log.Printf("Waiting for HB ack")
 		select {
 		case <-ctx.Done():
 			return
@@ -54,9 +57,11 @@ func (c *Conn) heartbeat(ctx context.Context) {
 			if !ok {
 				return
 			}
+			log.Printf("Got valid HB ack")
 			break
 		case <-time.After(c.cfg.HeartbeatInfo.Timer): // timer expired
 			c.errChan <- ErrHeartbeatExpired
+			log.Printf("HB ack timeout")
 			return
 		}
 
