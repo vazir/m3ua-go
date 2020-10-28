@@ -219,7 +219,7 @@ func (c *Conn) monitor(ctx context.Context) {
 			log.Printf("Error: %s not handled, continuing.", err)
 			continue
 		case state := <-c.stateChan:
-			log.Printf("State chan got: %s", state)
+			log.Printf("State chan got: %s, chan state: %s, established: %s", state, c.state, c.established)
 			// Act properly based on current state.
 			if err := c.handleStateUpdate(state); err != nil {
 				if err == ErrSCTPNotAlive {
