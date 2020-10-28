@@ -95,7 +95,7 @@ func (c *Conn) handleSignals(ctx context.Context, m3 messages.M3UA) {
 		return
 	default:
 	}
-	log.Printf("Handling Signals - after select: %s", m3)
+	log.Printf("Handling Signals - after select: %s", ctx)
 	// Signal validations
 	if m3.Version() != 1 {
 		c.errChan <- NewErrInvalidVersion(m3.Version())
@@ -217,7 +217,7 @@ func (c *Conn) monitor(ctx context.Context) {
 			n, info, err := c.sctpConn.SCTPRead(buf)
 			if err != nil {
 				if err == io.EOF {
-					log.Printf("Nothing to read from the sctp...: %s", err)
+					log.Printf("EOF on the sctp...: %s", err)
 					continue
 				}
 				log.Printf("Closing SCTP: %s", err)
@@ -225,7 +225,9 @@ func (c *Conn) monitor(ctx context.Context) {
 				return
 			}
 			if info != nil {
+				log.Printf("Info=%s", info)
 				if info.Stream != c.sctpInfo.Stream {
+					log.Printf("Closing in info-stream != sctpInfo.stream")
 					c.Close()
 					return
 				}
@@ -237,7 +239,7 @@ func (c *Conn) monitor(ctx context.Context) {
 				log.Printf("Unable to parse SCTP message: %s", err)
 				continue
 			}
-
+			log.Printf("Backgrounding signals handling with ctx: %s, msg: %s", ctx, msg)
 			go c.handleSignals(ctx, msg)
 		}
 	}
