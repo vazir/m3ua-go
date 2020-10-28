@@ -110,21 +110,25 @@ func (c *Conn) handleSignals(ctx context.Context, m3 messages.M3UA) {
 	// ASPSM
 	case *messages.AspUp:
 		if err := c.handleAspUp(msg); err != nil {
+			log.Printf("Error handling: %s, err: %s", msg, err)
 			c.errChan <- err
 		}
 		c.stateChan <- StateAspInactive
 	case *messages.AspUpAck:
 		if err := c.handleAspUpAck(msg); err != nil {
+			log.Printf("Error handling: %s, err: %s", msg, err)
 			c.errChan <- err
 		}
 		c.stateChan <- StateAspInactive
 	case *messages.AspDown:
 		if err := c.handleAspDown(msg); err != nil {
+			log.Printf("Error handling: %s, err: %s", msg, err)
 			c.errChan <- err
 		}
 		c.stateChan <- StateAspDown
 	case *messages.AspDownAck:
 		if err := c.handleAspDownAck(msg); err != nil {
+			log.Printf("Error handling: %s, err: %s", msg, err)
 			c.errChan <- err
 		}
 		c.stateChan <- StateAspDown
