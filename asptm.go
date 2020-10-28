@@ -66,10 +66,12 @@ func (c *Conn) heartbeat(ctx context.Context) {
 		}
 
 		// wait while next time
+		log.Printf("Waiting for next HB interval: %s", c.cfg.HeartbeatInfo.Interval)
 		select {
 		case <-ctx.Done():
 			return
 		case <-time.After(c.cfg.HeartbeatInfo.Interval):
+			log.Printf("Next HB interval reached: %s", c.cfg.HeartbeatInfo.Interval)
 			continue
 		}
 	}
