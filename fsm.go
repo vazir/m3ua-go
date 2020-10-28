@@ -173,6 +173,7 @@ func (c *Conn) handleSignals(ctx context.Context, m3 messages.M3UA) {
 		c.stateChan <- c.state
 	// Others: SSNM and RKM is not implemented.
 	default:
+		log.Printf("Got unsupported message: %s", m3)
 		c.errChan <- NewErrUnsupportedMessage(m3)
 	}
 	log.Printf("END Handling Signals - after select: %s", m3)
