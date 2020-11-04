@@ -58,6 +58,7 @@ func (c *Conn) handleStateUpdateAsClient(current, previous State) error {
 	case StateAspActive:
 		if current != previous {
 			c.established <- struct{}{}
+			c.beatAllow.Broadcast()
 		}
 		return nil
 	case StateSCTPCDI, StateSCTPRI:
