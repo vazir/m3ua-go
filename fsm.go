@@ -231,8 +231,9 @@ func (c *Conn) monitor(ctx context.Context) {
 			if err != nil {
 				log.Printf("ERR on the sctp...: %s, %s", err, info)
 				if err == io.EOF {
-					log.Printf("EOF on the sctp...: %s", err)
-					continue
+					log.Printf("SCTP Err is EOF: %s", err)
+					//continue
+					c.Close()
 				}
 				log.Printf("Closing SCTP: %s", err)
 				c.Close()
