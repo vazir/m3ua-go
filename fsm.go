@@ -234,6 +234,8 @@ func (c *Conn) monitor(ctx context.Context) {
 					log.Printf("SCTP Err is EOF: %s", err)
 					//continue
 					c.Close()
+					ctx.Done()
+					return
 				}
 				log.Printf("Closing SCTP: %s", err)
 				c.Close()
