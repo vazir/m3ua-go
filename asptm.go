@@ -25,6 +25,8 @@ func (c *Conn) initiateASPTM() error {
 }
 
 func (c *Conn) heartbeat(ctx context.Context) {
+	defer func() {log.Printf("HB exit.")}()
+	log.Printf("Waiting for HB allow.")
 	c.beatAllow.Wait()
 	if c.cfg.HeartbeatInfo.Enabled {
 		log.Printf("Heartbeat enabled")
@@ -56,6 +58,7 @@ func (c *Conn) heartbeat(ctx context.Context) {
 			return
 		case _, ok := <-c.beatAckChan: // got valid BEAT response from peer
 			if !ok {
+				log.Printf("Got Invalid HB ack")
 				return
 			}
 			log.Printf("Got valid HB ack")

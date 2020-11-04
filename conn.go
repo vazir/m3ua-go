@@ -25,6 +25,15 @@ const (
 	modeServer
 )
 
+// State represents ASP State.
+type readState uint8
+
+// M3UA status definitions.
+const (
+	StateChanClose readState = iota
+)
+
+
 // Conn represents a M3UA connection, which satisfies standard net.Conn interface.
 type Conn struct {
 	// mu is to Lock when updating state
@@ -60,6 +69,9 @@ var netMap = map[string]string{
 
 // Read reads data from the connection.
 func (c *Conn) Read(b []byte) (n int, err error) {
+	defer func() {
+		log.Printf("Exit from conn.Read.")
+	}()
 	err = func() error {
 		c.mu.Lock()
 		defer c.mu.Unlock()
@@ -82,7 +94,6 @@ func (c *Conn) Read(b []byte) (n int, err error) {
 	log.Printf("Data got data: %s", pd.Data)
 	copy(b, pd.Data)
 	return len(pd.Data), nil
-
 }
 
 // Write writes data to the connection.
@@ -129,17 +140,22 @@ func (c *Conn) WriteSignal(m3 messages.M3UA) (n int, err error) {
 
 // Close closes the connection.
 func (c *Conn) Close() error {
+	defer func() {log.Printf("Exit from conn.close")}()
+	log.Printf("Trying to close M3UA: %s", c.mu)
 	c.mu.Lock()
+	log.Printf("Locked.")
 	defer c.mu.Unlock()
 
 	if c.state == StateAspDown {
+		log.Printf("ASP is not up, just closing")
 		return c.sctpConn.Close()
 	}
-
+	log.Printf("ASP is up, processing closing sequence")
 	close(c.established)
 	close(c.beatAckChan)
 	close(c.dataChan)
 	c.state = StateAspDown
+	log.Printf("Closing SCTP")
 	return c.sctpConn.Close()
 }
 
