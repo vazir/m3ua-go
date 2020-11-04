@@ -234,6 +234,7 @@ func (c *Conn) monitor(ctx context.Context) {
 				if err == io.EOF {
 					log.Printf("SCTP Err is EOF: %s", err)
 					//continue
+					c.stateChan <- StateAspDown
 					c.Close()
 					ctx.Done()
 					return
