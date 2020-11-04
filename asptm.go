@@ -52,6 +52,7 @@ func (c *Conn) heartbeat(ctx context.Context) {
 		log.Printf("Waiting for HB ack")
 		select {
 		case <-ctx.Done():
+			log.Printf("HB CTX Done on beat ack wait.")
 			return
 		case _, ok := <-c.beatAckChan: // got valid BEAT response from peer
 			if !ok {
@@ -69,6 +70,7 @@ func (c *Conn) heartbeat(ctx context.Context) {
 		log.Printf("Waiting for next HB interval: %s", c.cfg.HeartbeatInfo.Interval)
 		select {
 		case <-ctx.Done():
+			log.Printf("HB Ended on beat time wait.")
 			return
 		case <-time.After(c.cfg.HeartbeatInfo.Interval):
 			log.Printf("Next HB interval reached: %s", c.cfg.HeartbeatInfo.Interval)

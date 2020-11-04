@@ -6,6 +6,7 @@ package m3ua
 
 import (
 	"fmt"
+	"log"
 	"net"
 	"sync"
 	"time"
@@ -72,11 +73,13 @@ func (c *Conn) Read(b []byte) (n int, err error) {
 		return 0, err
 	}
 
+	log.Printf("Waiting for data in data chan")
 	pd, ok := <-c.dataChan
 	if !ok {
+		log.Printf("Data chan returned error: %s", ok)
 		return 0, ErrNotEstablished
 	}
-
+	log.Printf("Data got data: %s", pd.Data)
 	copy(b, pd.Data)
 	return len(pd.Data), nil
 

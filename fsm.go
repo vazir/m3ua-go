@@ -232,12 +232,13 @@ func (c *Conn) monitor(ctx context.Context) {
 			if err != nil {
 				log.Printf("ERR on the sctp...: %s, %s", err, info)
 				if err == io.EOF {
-					log.Printf("SCTP Err is EOF: %s", err)
+					log.Printf("SCTP Error is EOF: %s", err)
 					//continue
 					//c.stateChan <- StateAspDown
 					c.stateChan <- StateSCTPCDI
 					//c.Close()
 					//ctx.Done()
+					log.Printf("SCTP Err - continuing: %s", err)
 					continue
 				}
 				log.Printf("Closing SCTP: %s", err)
