@@ -234,10 +234,11 @@ func (c *Conn) monitor(ctx context.Context) {
 				if err == io.EOF {
 					log.Printf("SCTP Err is EOF: %s", err)
 					//continue
-					c.stateChan <- StateAspDown
-					c.Close()
-					ctx.Done()
-					return
+					//c.stateChan <- StateAspDown
+					c.stateChan <- StateSCTPCDI
+					//c.Close()
+					//ctx.Done()
+					continue
 				}
 				log.Printf("Closing SCTP: %s", err)
 				c.Close()
