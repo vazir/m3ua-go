@@ -245,7 +245,7 @@ func (c *Conn) monitor(ctx context.Context) {
 					return
 				}
 				log.Printf("Closing SCTP on error: %s, %s, buf-n: [%x]", err, info, n)
-				c.stateChan <- StateSCTPCDI
+				//c.stateChan <- StateSCTPCDI
 				c.Close()
 				return
 			}
