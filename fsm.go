@@ -230,7 +230,7 @@ func (c *Conn) monitor(ctx context.Context) {
 			// Read from conn to see something coming from the peer.
 			n, info, err := c.sctpConn.SCTPRead(buf)
 			if err != nil {
-				log.Printf("ERR on the sctp...: %s, %s", err, info)
+				log.Printf("ERR on the sctp...: err: %s %s, buf-n: [%x]", err, info, n)
 				if err == io.EOF {
 					log.Printf("SCTP Error is EOF: %s", err)
 					c.Close()
@@ -244,7 +244,8 @@ func (c *Conn) monitor(ctx context.Context) {
 					//continue
 					return
 				}
-				log.Printf("Closing SCTP: %s", err)
+				log.Printf("Closing SCTP on error: %s, %s, buf-n: [%x]", err, info, n)
+				c.stateChan <- StateSCTPCDI
 				c.Close()
 				return
 			}
