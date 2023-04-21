@@ -17,14 +17,20 @@ import (
 //
 // After successfully established the connection with peer, state-changing
 // signals and heartbeats are automatically handled background in another goroutine.
-func Dial(ctx context.Context, net string, laddr, raddr *sctp.SCTPAddr, cfg *Config) (*Conn, error) {
+
+const (
+	//MAX_CLIENTS = 128
+	MAX_STREAMS = 10
+)
+
+func Dial(ctx context.Context, net string, laddr *sctp.SCTPAddr, raddr *sctp.SCTPAddr, cfg *Config) (*Conn, error) {
 	var err error
 	conn := &Conn{
 		mu:          new(sync.Mutex),
 		mode:        modeClient,
 		stateChan:   make(chan State),
 		established: make(chan struct{}),
-		sctpInfo:    &sctp.SndRcvInfo{PPID: 0x03000000, Stream: 0},
+		sctpInfo:    &sctp.SndRcvInfo{PPID: 0x03000000, Stream: 0, Flags: 0x07},
 		cfg:         cfg,
 	}
 
@@ -37,7 +43,10 @@ func Dial(ctx context.Context, net string, laddr, raddr *sctp.SCTPAddr, cfg *Con
 		return nil, fmt.Errorf("invalid network: %s", net)
 	}
 
-	conn.sctpConn, err = sctp.DialSCTP(n, laddr, raddr)
+	//conn.sctpConn, err = sctp.DialSCTP(n, laddr, raddr)
+	conn.sctpConn, err = sctp.DialSCTPExt(
+		n, laddr, raddr, sctp.InitMsg{NumOstreams: MAX_STREAMS, MaxInstreams: MAX_STREAMS})
+
 	if err != nil {
 		return nil, err
 	}
