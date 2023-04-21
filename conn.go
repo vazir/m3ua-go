@@ -33,7 +33,6 @@ const (
 	StateChanClose readState = iota
 )
 
-
 // Conn represents a M3UA connection, which satisfies standard net.Conn interface.
 type Conn struct {
 	// mu is to Lock when updating state
@@ -57,7 +56,7 @@ type Conn struct {
 	// sctpInfo is SndRcvInfo in SCTP association
 	sctpInfo *sctp.SndRcvInfo
 	// cfg is a configuration that is required to communicate between M3UA endpoints
-	cfg *Config
+	cfg       *Config
 	beatAllow *sync.Cond
 }
 
@@ -112,6 +111,7 @@ func (c *Conn) Write(b []byte) (n int, err error) {
 		return 0, err
 	}
 
+	c.sctpInfo.Stream = 0x0001
 	n, err = c.sctpConn.SCTPWrite(d, c.sctpInfo)
 	if err != nil {
 		return 0, err
@@ -140,7 +140,7 @@ func (c *Conn) WriteSignal(m3 messages.M3UA) (n int, err error) {
 
 // Close closes the connection.
 func (c *Conn) Close() error {
-	defer func() {log.Printf("Exit from conn.close")}()
+	defer func() { log.Printf("Exit from conn.close") }()
 	log.Printf("Trying to close M3UA: %s", c.mu)
 	c.mu.Lock()
 	log.Printf("Locked.")
