@@ -95,6 +95,15 @@ func (c *Conn) Read(b []byte) (n int, err error) {
 	return len(pd.Data), nil
 }
 
+func (c *Conn) getDefaultSctpConnInfo() (info *sctp.SndRcvInfo) {
+	return c.sctpInfo
+}
+
+func (c *Conn) setDefaultSctpConnInfo(info *sctp.SndRcvInfo) error {
+	c.sctpInfo = info
+	return nil
+}
+
 // Write writes data to the connection.
 func (c *Conn) Write(b []byte) (n int, err error) {
 	if c.state != StateAspActive {
@@ -112,6 +121,32 @@ func (c *Conn) Write(b []byte) (n int, err error) {
 	}
 
 	c.sctpInfo.Stream = 0x0001
+	n, err = c.sctpConn.SCTPWrite(d, c.sctpInfo)
+	if err != nil {
+		return 0, err
+	}
+
+	n += len(d)
+	return n, nil
+}
+
+// Write writes data to the connection.
+func (c *Conn) WriteToStream(b []byte, stream_id uint16) (n int, err error) {
+	if c.state != StateAspActive {
+		return 0, ErrNotEstablished
+	}
+	d, err := messages.NewData(
+		c.cfg.NetworkAppearance, c.cfg.RoutingContexts, params.NewProtocolData(
+			c.cfg.OriginatingPointCode, c.cfg.DestinationPointCode,
+			c.cfg.ServiceIndicator, c.cfg.NetworkIndicator,
+			c.cfg.MessagePriority, c.cfg.SignalingLinkSelection, b,
+		), c.cfg.CorrelationID,
+	).MarshalBinary()
+	if err != nil {
+		return 0, err
+	}
+
+	c.sctpInfo.Stream = stream_id
 	n, err = c.sctpConn.SCTPWrite(d, c.sctpInfo)
 	if err != nil {
 		return 0, err
